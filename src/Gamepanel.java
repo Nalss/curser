@@ -4,11 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Gamepanel extends JComponent implements KeyListener {
+public class Gamepanel extends JComponent implements KeyListener, MouseMotionListener {
 
     private final Tiling tile;
     private final Player player;
     JFrame frame = new JFrame("Game");
+
+    boolean mapDrawn = false;
 
 
     public Gamepanel() {
@@ -26,6 +28,7 @@ public class Gamepanel extends JComponent implements KeyListener {
             Gamepanel gamePanel = this;
             frame.add(gamePanel);
             frame.addKeyListener(gamePanel); //Add key listener for player movement
+            gamePanel.addMouseMotionListener(gamePanel); // Track mouse movement
             frame.setVisible(true); //Ensures the frame is displayed
 
 
@@ -35,12 +38,44 @@ public class Gamepanel extends JComponent implements KeyListener {
 
     // Game loop with tick speed
     public void startGame() {
-        int tickSpeed = 1000 / 60; //60 FPS
-        Timer timer = new Timer(tickSpeed, e -> {
-            updateGame(); //Update game state
-            repaint();   //Repaint the screen
-        });
-        timer.start();
+        final int FPS = 60;
+        final int TICK_RATE = 60;
+    
+        new Thread(() -> {
+            long lastTime = System.nanoTime();
+            long timer = 0;
+            int frames = 0;
+        
+            while (true) {
+                long now = System.nanoTime();
+                long elapsed = now - lastTime;
+                lastTime = now;
+            
+                timer += elapsed;
+                frames++;
+            
+                // Fixed timestep for logic
+                while (timer >= 1_000_000_000L / TICK_RATE) {
+                    updateGame();           // Player movement, AI, etc.
+                    timer -= 1_000_000_000L / TICK_RATE;
+                }
+            
+                repaint();
+            
+                // Show FPS in window title (optional)
+                if (timer >= 1_000_000_000L) {
+                    System.out.println("FPS: " + frames);
+                    // frame.setTitle("Game - FPS: " + frames);
+                    frames = 0;
+                    timer = 0;
+                }
+            
+                // Sleep to avoid 100% CPU
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ignored) {}
+            }
+        }, "GameLoop").start();
     }
 
     //Update game state
@@ -52,9 +87,9 @@ public class Gamepanel extends JComponent implements KeyListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        tile.draw(g, getWidth(), getHeight());
+         tile.draw(g, getWidth(), getHeight());
         player.drawPlayer(g, getWidth(), getHeight());
-        player.drawCursor(g, frame.getContentPane());
+        player.drawCursor(g);
     }
 
     //KeyListener methods
@@ -71,5 +106,17 @@ public class Gamepanel extends JComponent implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         //Null
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        // Update player with mouse position relative to this component
+        player.setMousePosition(e.getX(), e.getY());
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        // Treat dragged same as moved for cursor tracking
+        player.setMousePosition(e.getX(), e.getY());
     }
 }
