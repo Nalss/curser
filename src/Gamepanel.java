@@ -1,31 +1,33 @@
 package src;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public class Gamepanel extends JComponent implements KeyListener {
 
-    
-    private Player player;
+    private final Tiling tile;
+    private final Player player;
     JFrame frame = new JFrame("Game");
 
 
     public Gamepanel() {
         player = new Player(180, 200, 20, 30, 5);
+        tile = new Tiling();
     }
 
     public void openGUI() {
         //Open GUI
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(600, 400); //Set the size of the window
-//            frame.setResizable(false); //Disable resizing
-//            frame.setFocusable(true); //Make the frame focusable
+            frame.setSize(600, 428); //Set the size of the window
+            frame.setResizable(false); //Disable resizing
+            frame.setFocusable(true); //Make the frame focusable
             frame.setLocationRelativeTo(null); //Centers the window on screen
             Gamepanel gamePanel = this;
             frame.add(gamePanel);
             frame.addKeyListener(gamePanel); //Add key listener for player movement
             frame.setVisible(true); //Ensures the frame is displayed
+
 
             //Start the game loop
             startGame();
@@ -33,7 +35,7 @@ public class Gamepanel extends JComponent implements KeyListener {
 
     // Game loop with tick speed
     public void startGame() {
-        int tickSpeed = 1000 / 60; //60 FPS for smoother animation
+        int tickSpeed = 1000 / 60; //60 FPS
         Timer timer = new Timer(tickSpeed, e -> {
             updateGame(); //Update game state
             repaint();   //Repaint the screen
@@ -50,7 +52,8 @@ public class Gamepanel extends JComponent implements KeyListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        player.draw(g, getWidth(), getHeight());
+        tile.draw(g, getWidth(), getHeight());
+        player.drawPlayer(g, getWidth(), getHeight());
         player.drawCursor(g, frame.getContentPane());
     }
 

@@ -8,9 +8,9 @@ public class Player {
 //Player attributes
 private int x;
 private int y;
-private int width;
-private int height;
-private int speed;
+private final int width;
+private final int height;
+private final int speed;
 
 // Gravity attributes
 private double velocityY = 0;
@@ -81,12 +81,7 @@ public void update(int panelWidth, int panelHeight) {
 }
 
 // Draw player
-public void draw(Graphics g, int panelWidth, int panelHeight) {
-    // Background
-    g.setColor(Color.BLACK);
-    g.fillRect(0, 0, panelWidth, panelHeight);
-
-    // Player
+public void drawPlayer(Graphics g, int panelWidth, int panelHeight) {
     g.setColor(Color.BLUE);
     g.fillRect(x, y, width, height);
 }
