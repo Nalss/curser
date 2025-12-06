@@ -37,8 +37,10 @@ public class Player {
 
     // Handle key press
     public void keyPressed(int key) {
-        if (key == KeyEvent.VK_A) isMovingLeft = true;
-        if (key == KeyEvent.VK_D) isMovingRight = true;
+        if (key == KeyEvent.VK_A)
+            isMovingLeft = true;
+        if (key == KeyEvent.VK_D)
+            isMovingRight = true;
         if (key == KeyEvent.VK_W && isOnGround) {
             velocityY = jumpStrength;
             isOnGround = false;
@@ -47,15 +49,19 @@ public class Player {
 
     // Handle key release
     public void keyReleased(int key) {
-        if (key == KeyEvent.VK_A) isMovingLeft = false;
-        if (key == KeyEvent.VK_D) isMovingRight = false;
+        if (key == KeyEvent.VK_A)
+            isMovingLeft = false;
+        if (key == KeyEvent.VK_D)
+            isMovingRight = false;
     }
 
     // Update player's position
     public void update(int panelWidth, int panelHeight) {
         // Horizontal movement
-        if (isMovingLeft) x -= speed;
-        if (isMovingRight) x += speed;
+        if (isMovingLeft)
+            x -= speed;
+        if (isMovingRight)
+            x += speed;
 
         // Gravity
         velocityY += gravity;
@@ -97,7 +103,8 @@ public class Player {
 
     // Draw cursor using the last-known mouse coordinates
     public void drawCursor(Graphics g) {
-        if (mouseX < 0 || mouseY < 0) return; // no mouse data yet
+        if (mouseX < 0 || mouseY < 0)
+            return; // no mouse data yet
 
         // Calculate differences relative to player's center
         double dx = mouseX - (x + width / 2.0);

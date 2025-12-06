@@ -33,7 +33,8 @@ public class Tiling {
     }
 
     public void draw(Graphics g, int panelWidth, int panelHeight) {
-        if (mapLines.isEmpty()) return;
+        if (mapLines.isEmpty())
+            return;
 
         int tileSize = Math.max(1, panelWidth / 50); // Size of each tile
 
