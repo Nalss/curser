@@ -42,7 +42,7 @@ public class Gamepanel extends JComponent implements KeyListener, MouseMotionLis
         new Thread(() -> {
             long lastTime = System.nanoTime();
             long timer = 0;
-            int frames = 0;
+            // int frames = 0;
 
             while (true) {
                 long now = System.nanoTime();
@@ -50,7 +50,7 @@ public class Gamepanel extends JComponent implements KeyListener, MouseMotionLis
                 lastTime = now;
 
                 timer += elapsed;
-                frames++;
+                // waadwdframes++;
 
                 // Fixed timestep for logic
                 while (timer >= 1_000_000_000L / TICK_RATE) {
@@ -60,13 +60,15 @@ public class Gamepanel extends JComponent implements KeyListener, MouseMotionLis
 
                 repaint();
 
-                // Show FPS in window title (optional)
-                if (timer >= 1_000_000_000L) {
-                    System.out.println("FPS: " + frames);
-                    // frame.setTitle("Game - FPS: " + frames);
-                    frames = 0;
-                    timer = 0;
-                }
+                /*
+                 * Show FPS in window title (optional)
+                 * if (timer >= 1_000_000_000L) {
+                 * System.out.println("FPS: " + frames);
+                 * // frame.setTitle("Game - FPS: " + frames);
+                 * frames = 0;
+                 * timer = 0;
+                 * }
+                 */
 
                 // Sleep to avoid 100% CPU
                 try {
