@@ -129,9 +129,9 @@ public class Player {
     }
 
     // Draw cursor using the last-known mouse coordinates
-    public void drawCursor(Graphics g) {
+    public boolean drawCursor(Graphics g) {
         if (mouseX < 0 || mouseY < 0)
-            return; // no mouse data yet
+            return False; // no mouse data yet
 
         // Calculate differences relative to player's center
         double dx = mouseX - (x + width / 2.0);
@@ -143,5 +143,7 @@ public class Player {
 
         g.setColor(Color.RED);
         g.fillRect(cursorX - 5, cursorY - 8, 14, 14);
+
+        return True;
     }
 }
