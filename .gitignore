@@ -1,5 +1,6 @@
 # Ignore compiled class files
 out/
+.class
 
 # Ignore manifest files
 *.MF
