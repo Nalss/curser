@@ -10,8 +10,6 @@ public class Gamepanel extends JComponent implements KeyListener, MouseMotionLis
     private final Player player;
     JFrame frame = new JFrame("Game");
 
-    boolean mapDrawn = false;
-
     public Gamepanel() {
         player = new Player(180, 200, 20, 30, 5);
         tile = new Tiling();

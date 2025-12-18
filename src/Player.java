@@ -2,6 +2,8 @@ package src;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Player {
 
@@ -17,10 +19,14 @@ public class Player {
     private final double gravity = 0.7;
     private final double jumpStrength = -12;
     private boolean isOnGround = false;
+    private boolean setToJump = false;
+    private int jumpWindow = 0;
 
-    // Movement flags
+    // Keyboard flags
     private boolean isMovingLeft = false;
     private boolean isMovingRight = false;
+    Set<Integer> keys = new HashSet<>();
+
 
     // Mouse tracking (updated by MouseMotionListener)
     private int mouseX = -1;
@@ -36,27 +42,32 @@ public class Player {
     }
 
     // Handle key press
-    public void keyPressed(int key) {
-        if (key == KeyEvent.VK_A)
-            isMovingLeft = true;
-        if (key == KeyEvent.VK_D)
-            isMovingRight = true;
-        if (key == KeyEvent.VK_W && isOnGround) {
-            velocityY = jumpStrength;
-            isOnGround = false;
-        }
+    public void keyPressed(int newKey) {
+        keys.add(newKey);
     }
-
     // Handle key release
-    public void keyReleased(int key) {
-        if (key == KeyEvent.VK_A)
-            isMovingLeft = false;
-        if (key == KeyEvent.VK_D)
-            isMovingRight = false;
+    public void keyReleased(int releasedKey) {
+        keys.remove(releasedKey);
     }
 
     // Update player's position
     public void update(int panelWidth, int panelHeight) {
+        // Horizontal key update press
+        if (keys.contains(KeyEvent.VK_A))
+            isMovingLeft = true;
+        if (keys.contains(KeyEvent.VK_D))
+            isMovingRight = true;
+        if (keys.contains(KeyEvent.VK_W)) {
+            setToJump = true;        // remember that the player wants to jump
+            jumpWindow = 2;         // allow jump buffering for 10 ticks
+        }
+        // Horizontal key update release
+        if (!keys.contains(KeyEvent.VK_A))
+            isMovingLeft = false;
+        if (!keys.contains(KeyEvent.VK_D))
+            isMovingRight = false;
+
+        
         // Horizontal movement
         if (isMovingLeft)
             x -= speed;
@@ -67,14 +78,14 @@ public class Player {
         velocityY += gravity;
         y += (int) velocityY;
 
-        // Clamp to panel bounds (ground collision)
+        /* Collision */
+        // Clamp to panel bounds
         if (x < 0) {
             x = 0;
         } else if (x > panelWidth - width) {
             x = panelWidth - width;
         }
-
-        // Ground collision and isOnGround logic
+        // Ground collision
         if (y >= panelHeight - height) {
             y = panelHeight - height;
             velocityY = 0;
@@ -86,6 +97,22 @@ public class Player {
         if (y < 0) {
             y = 0;
             velocityY = 0;
+        }
+
+        // Jump logic with jump buffering
+        if (jumpWindow > 0) {
+            jumpWindow--;
+        }
+        if (setToJump) {
+            if (isOnGround) {
+                // Perform the jump
+                velocityY = jumpStrength;
+                isOnGround = false;
+                setToJump = false;
+                jumpWindow = 0;
+            } else if (jumpWindow <= 0) { // Jump window expired without touching the ground
+                setToJump = false;
+            }
         }
     }
 
